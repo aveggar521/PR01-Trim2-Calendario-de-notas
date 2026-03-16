@@ -1,0 +1,125 @@
+body {
+    font-family: Arial;
+    background: #f9ffdc;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 40px;
+}
+
+h2 {
+    font-size: 30px;
+}
+
+#meses {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.mes {
+    background: rgb(255, 255, 255);
+    border: 3px solid rgb(8, 8, 8);
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.mes:hover{
+    background-color: #dfdfdf;
+}
+
+.mes-con-notas {
+    background: #b3e9b0;
+}
+
+.mes-con-notas:hover {
+    background: #9dfa98;
+}
+
+.mes-vacio {
+    background: #eee;
+}
+
+button {
+    padding: 8px 12px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+textarea {
+    width: 100%;
+    height: 80px;
+}
+
+input {
+    width: 100%;
+}
+
+#btnVolver {
+    padding: 10px 20px;
+    background-color: #a87300;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+#btnVolver:hover {
+    background-color: #e79e01;
+}
+
+#btnGuardar {
+    padding: 10px 20px;
+    background-color: #a87300;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+#btnGuardar:hover {
+    background-color: #e79e01;
+}
+
+#btnListar {
+    padding: 10px 20px;
+    background-color: #a87300;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+#btnListar:hover {
+    background-color: #e79e01;
+}
+
+#btnLimpiar {
+    padding: 10px 20px;
+    background-color: #a87300;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+#btnLimpiar:hover {
+    background-color: #e79e01;
+}
+
+#error {
+    color: red;
+}
