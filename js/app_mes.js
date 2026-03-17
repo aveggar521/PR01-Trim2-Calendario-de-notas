@@ -1,87 +1,89 @@
 const meses = [
-    "Enero", "Febrero", "Marzo", "Abril",
-    "Mayo", "Junio", "Julio", "Agosto",
-    "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ];
 
 const params = new URLSearchParams(window.location.search);
 const mes = Number(params.get("mes"));
-
 let editandoId = null;
 
-iniciar();
-
 function iniciar() {
-
-    document.getElementById("nombreMes").textContent = "Notas de " + meses[mes];
-
+    document.querySelector("#nombreMes").textContent = "Notas de " + meses[mes];
     mostrarNotas();
 
-    document.getElementById("formNota").addEventListener("submit", guardarNota);
+    document.querySelector("#formNota").addEventListener("submit", guardarNota);
+
+    const btnVolver = document.querySelector("#btnVolver");
+    if (btnVolver) btnVolver.addEventListener("click", function () {
+        window.location.href = "index.html";
+    });
 }
 
 function cargarNotas() {
-
     const datos = localStorage.getItem("calendarioNotas");
-
-    if (!datos) {
-        return [];
-    }
-
-    return JSON.parse(datos);
+    if (datos) return JSON.parse(datos);
+    return [];
 }
 
 function guardarNotas(notas) {
-
     localStorage.setItem("calendarioNotas", JSON.stringify(notas));
 }
 
 function mostrarNotas() {
-
-    const lista = document.getElementById("listaNotas");
+    const lista = document.querySelector("#listaNotas");
     lista.innerHTML = "";
 
     const notas = cargarNotas();
 
-    const notasMes = notas.filter(n => n.mes === mes);
+    for (let i = 0; i < notas.length; i++) {
+        if (notas[i].mes === mes) {
+            const li = document.createElement("li");
+            li.innerHTML = `<strong>${notas[i].titulo}</strong><br>${notas[i].descripcion}<br>`;
 
-    notasMes.forEach(nota => {
+            const btnEditar = document.createElement("button");
+            btnEditar.textContent = "Editar";
+            btnEditar.addEventListener("click", function () {
+                editarNota(notas[i].id);
+            });
 
-        const li = document.createElement("li");
+            const btnEliminar = document.createElement("button");
+            btnEliminar.textContent = "Eliminar";
+            btnEliminar.addEventListener("click", function () {
+                eliminarNota(notas[i].id);
+            });
 
-        li.innerHTML = `
-        <h3>${nota.titulo}</h3>
-        <p>${nota.descripcion}</p>
-        <button onclick="editarNota(${nota.id})">Editar</button>
-        <button onclick="eliminarNota(${nota.id})">Eliminar</button>
-        `;
-
-        lista.appendChild(li);
-    });
+            li.appendChild(btnEditar);
+            li.appendChild(btnEliminar);
+            lista.appendChild(li);
+        }
+    }
 }
 
 function guardarNota(e) {
-
     e.preventDefault();
 
-    const titulo = document.getElementById("titulo").value.trim();
-    const descripcion = document.getElementById("descripcion").value.trim();
-
-    const error = document.getElementById("error");
-
-    if (titulo === "" || descripcion === "") {
-
-        error.textContent = "Todos los campos son obligatorios";
-        return;
-
-    }
+    const titulo = document.querySelector("#titulo").value.trim();
+    const descripcion = document.querySelector("#descripcion").value.trim();
+    const error = document.querySelector("#error");
 
     error.textContent = "";
 
-    let notas = cargarNotas();
+    if (titulo === "" || descripcion === "") {
+        error.textContent = "Todos los campos son obligatorios";
+        return;
+    }
 
-    if (editandoId) {
+    const notas = cargarNotas();
 
+    if (editandoId === null) {
+        const nuevaNota = {
+            id: Date.now(),
+            mes: mes,
+            titulo: titulo,
+            descripcion: descripcion
+        };
+        notas.push(nuevaNota);
+    } else {
         let nota = null;
         for (let i = 0; i < notas.length; i++) {
             if (notas[i].id === editandoId) {
@@ -89,61 +91,42 @@ function guardarNota(e) {
                 break;
             }
         }
-
-        nota.titulo = titulo;
-        nota.descripcion = descripcion;
-
+        if (nota) {
+            nota.titulo = titulo;
+            nota.descripcion = descripcion;
+        }
         editandoId = null;
-
-    } else {
-
-        const nuevaNota = {
-            id: Date.now(),
-            mes: mes,
-            titulo: titulo,
-            descripcion: descripcion
-        };
-
-        notas.push(nuevaNota);
-
     }
 
     guardarNotas(notas);
-
-    document.getElementById("formNota").reset();
-
+    document.querySelector("#formNota").reset();
     mostrarNotas();
 }
 
+function editarNota(id) {
+    const notas = cargarNotas();
+    for (let i = 0; i < notas.length; i++) {
+        if (notas[i].id === id) {
+            document.querySelector("#titulo").value = notas[i].titulo;
+            document.querySelector("#descripcion").value = notas[i].descripcion;
+            editandoId = id;
+            break;
+        }
+    }
+}
+
 function eliminarNota(id) {
+    if (!confirm("¿Eliminar esta nota?")) return;
 
-    const confirmar = confirm("¿Eliminar nota?");
-
-    if (!confirmar) return;
-
-    let notas = cargarNotas();
-
+    const notas = cargarNotas();
     for (let i = 0; i < notas.length; i++) {
         if (notas[i].id === id) {
             notas.splice(i, 1);
             break;
         }
     }
-
     guardarNotas(notas);
-
     mostrarNotas();
 }
 
-function editarNota(id) {
-
-    const notas = cargarNotas();
-
-    const nota = notas.find(n => n.id === id);
-
-    document.getElementById("titulo").value = nota.titulo;
-    document.getElementById("descripcion").value = nota.descripcion;
-
-    editandoId = id;
-}
-
+iniciar();
